@@ -182,7 +182,9 @@ open class NetworkReachabilityManager {
             guard let info = info else { return }
 
             let instance = Unmanaged<NetworkReachabilityManager>.fromOpaque(info).takeUnretainedValue()
-            instance.notifyListener(flags)
+            instance.reachabilityQueue.async { [weak instance] in
+                instance?.notifyListener(flags)
+            }
         }
 
         let queueAdded = SCNetworkReachabilitySetDispatchQueue(reachability, reachabilityQueue)
